@@ -2,6 +2,7 @@ package com.tobiweber.socialtimer.ui
 
 import android.content.ComponentName
 import android.content.Context
+import android.os.PowerManager
 import android.provider.Settings
 import android.text.TextUtils
 import androidx.core.app.NotificationManagerCompat
@@ -29,3 +30,7 @@ fun areNotificationsEnabled(context: Context): Boolean =
 
 fun canScheduleExactAlarms(context: Context): Boolean =
     TimerScheduler.canScheduleExactAlarms(context)
+
+/** true, wenn die App von der Akku-Optimierung (Doze/Energiesparmodus) ausgenommen ist. */
+fun isIgnoringBatteryOptimizations(context: Context): Boolean =
+    context.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(context.packageName)

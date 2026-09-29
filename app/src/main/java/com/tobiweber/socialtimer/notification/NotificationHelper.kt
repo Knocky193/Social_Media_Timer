@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.tobiweber.socialtimer.R
 
 /**
@@ -43,6 +44,7 @@ object NotificationHelper {
     }
 
     fun showTimeUpNotification(context: Context, appName: String, packageName: String) {
+        cancel(context, notificationIdFor(packageName, CHANNEL_UNLOCKED))
         show(
             context = context,
             channelId = CHANNEL_TIME_UP,
@@ -53,6 +55,7 @@ object NotificationHelper {
     }
 
     fun showUnlockedNotification(context: Context, appName: String, packageName: String) {
+        cancel(context, notificationIdFor(packageName, CHANNEL_TIME_UP))
         show(
             context = context,
             channelId = CHANNEL_UNLOCKED,
@@ -79,10 +82,20 @@ object NotificationHelper {
             .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            .setWhen(System.currentTimeMillis())
+            .setShowWhen(true)
             .build()
 
-        androidx.core.app.NotificationManagerCompat.from(context)
-            .notify(notificationId, notification)
+        // Eine noch sichtbare Benachrichtigung aus dem letzten Zyklus zuerst entfernen:
+        // Ein reines Update derselben ID wird von "Modi und Routinen" nicht zuverlässig als
+        // neue Benachrichtigung erkannt, die Routine würde dann ab dem 2. Zyklus nicht mehr greifen.
+        val manager = NotificationManagerCompat.from(context)
+        manager.cancel(notificationId)
+        manager.notify(notificationId, notification)
+    }
+
+    private fun cancel(context: Context, notificationId: Int) {
+        NotificationManagerCompat.from(context).cancel(notificationId)
     }
 
     private fun notificationIdFor(packageName: String, channelId: String): Int =

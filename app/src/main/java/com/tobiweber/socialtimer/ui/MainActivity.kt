@@ -15,8 +15,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.lifecycleScope
 import com.tobiweber.socialtimer.data.AppRepository
 import com.tobiweber.socialtimer.ui.theme.SocialTimerTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -39,6 +41,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Verpasste Alarme nachholen, damit die Anzeige stimmt und kein Zyklus hängen bleibt.
+        lifecycleScope.launch { repository.resyncAll() }
     }
 }
 

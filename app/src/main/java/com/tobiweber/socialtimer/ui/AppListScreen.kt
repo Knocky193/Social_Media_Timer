@@ -65,6 +65,7 @@ fun AppListScreen(
     val accessibilityEnabled = remember(permissionsVersion) { isAccessibilityServiceEnabled(context) }
     val notificationsEnabled = remember(permissionsVersion) { areNotificationsEnabled(context) }
     val exactAlarmsAllowed = remember(permissionsVersion) { canScheduleExactAlarms(context) }
+    val batteryUnrestricted = remember(permissionsVersion) { isIgnoringBatteryOptimizations(context) }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Social Timer") }) },
@@ -112,6 +113,22 @@ fun AppListScreen(
                         buttonText = "Aktivieren",
                         onClick = {
                             val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                                .setData(Uri.parse("package:" + context.packageName))
+                            context.startActivity(intent)
+                        }
+                    )
+                }
+            }
+
+            if (!batteryUnrestricted) {
+                item {
+                    PermissionBanner(
+                        text = "Akku-Optimierung ist aktiv. Im Energiesparmodus kann das System Timer-Alarme " +
+                            "verzögern oder die App beenden. Bitte die App ausnehmen und unter " +
+                            "Einstellungen > Akku > Hintergrund-Nutzungslimits nicht zu den schlafenden Apps hinzufügen.",
+                        buttonText = "Ausnehmen",
+                        onClick = {
+                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
                                 .setData(Uri.parse("package:" + context.packageName))
                             context.startActivity(intent)
                         }
