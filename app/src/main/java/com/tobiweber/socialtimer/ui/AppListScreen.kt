@@ -252,10 +252,15 @@ private fun MonitoredAppRow(
 private fun stateLabel(app: MonitoredApp): String {
     val timeFormat = SimpleDateFormat("HH:mm", Locale.GERMANY)
     return when (app.state) {
-        AppState.IDLE -> if (app.enabled) "Inaktiv – wird beim nächsten Öffnen gestartet" else "Deaktiviert"
+        AppState.IDLE -> if (app.enabled) "Inaktiv – startet bei der nächsten Nutzung" else "Deaktiviert"
         AppState.TIMER_RUNNING -> {
-            val end = app.timerEndAtMillis
-            if (end != null) "Timer läuft, endet um ${timeFormat.format(Date(end))}" else "Timer läuft"
+            // Der Timer zählt nur, während die App im Vordergrund genutzt wird.
+            val remainingMinutes = (app.remainingMillisAt(System.currentTimeMillis()) + 59_999) / 60_000
+            if (app.usageStartedAtMillis != null) {
+                "Wird genutzt – noch $remainingMinutes Min."
+            } else {
+                "Pausiert – noch $remainingMinutes von ${app.timerMinutes} Min. übrig"
+            }
         }
         AppState.LOCKED_COOLDOWN -> {
             val end = app.cooldownEndAtMillis

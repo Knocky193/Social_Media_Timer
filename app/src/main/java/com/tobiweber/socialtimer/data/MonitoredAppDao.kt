@@ -20,6 +20,9 @@ interface MonitoredAppDao {
     @Query("SELECT * FROM monitored_apps WHERE state != 'IDLE'")
     suspend fun getAllWithActiveCycle(): List<MonitoredApp>
 
+    @Query("SELECT * FROM monitored_apps WHERE usageStartedAtMillis IS NOT NULL")
+    suspend fun getAllWithOpenUsage(): List<MonitoredApp>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(app: MonitoredApp)
 

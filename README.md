@@ -2,7 +2,7 @@
 
 (Warning: This app was developed primarily using AI and may contain errors.)
 
-Eine Android-App, die die Nutzungszeit von Social-Media-Apps begrenzt: Nach einer festgelegten Nutzungszeit folgt eine Pause (Cooldown), danach beginnt der Zyklus beim nächsten Öffnen von vorn – beliebig oft, im Dauerbetrieb.
+Eine Android-App, die die Nutzungszeit von Social-Media-Apps begrenzt: Nach einer festgelegten Zeit *echter* Nutzung folgt eine Pause (Cooldown), danach beginnt der Zyklus bei der nächsten Nutzung von vorn – beliebig oft, im Dauerbetrieb.
 
 Die App läuft komplett lokal auf dem Gerät. Das eigentliche Sperren der Apps übernimmt **„Modi und Routinen“ von Samsung**, gesteuert über Benachrichtigungen dieser App.
 
@@ -10,13 +10,17 @@ Die App läuft komplett lokal auf dem Gerät. Das eigentliche Sperren der Apps �
 
 Pro überwachter App gibt es zwei Timer:
 
-1. **Nutzungs-Timer** – startet, sobald die App geöffnet wird. Er läuft nach Uhrzeit weiter, auch wenn die App zwischendurch geschlossen wird.
-2. **Cooldown-Timer** – startet, wenn der Nutzungs-Timer abgelaufen ist. Solange er läuft, ist die App gesperrt.
+1. **Nutzungs-Timer** – zählt nur, solange die App wirklich genutzt wird:
+   - der Bildschirm ist an **und** das Handy ist entsperrt,
+   - die App ist sichtbar im Vordergrund.
+
+   In allen anderen Fällen pausiert er, z. B. bei ausgeschaltetem Bildschirm (auch wenn die App noch offen ist), auf dem Sperrbildschirm, oder wenn die App minimiert bzw. im Hintergrund ist. Die bereits genutzte Zeit bleibt dabei erhalten. Wird die App so lange nicht genutzt, wie der Cooldown dauert, verfällt die angebrochene Zeit und das Limit beginnt von vorn.
+2. **Cooldown-Timer** – startet, wenn die Nutzungszeit aufgebraucht ist. Er läuft nach Uhrzeit, unabhängig davon, ob das Handy benutzt wird. Solange er läuft, ist die App gesperrt.
 
 Ablauf eines Zyklus:
 
 ```
-App geöffnet ──► Nutzungs-Timer läuft ──► Benachrichtigung „<App>-Zeit abgelaufen“
+App genutzt ───► Nutzungszeit aufgebraucht ──► Benachrichtigung „<App>-Zeit abgelaufen“
                                                   │  (Routine aktiviert Sperr-Modus)
                                                   ▼
                                           Cooldown läuft
@@ -25,10 +29,10 @@ App geöffnet ──► Nutzungs-Timer läuft ──► Benachrichtigung „<App
                                    Benachrichtigung „<App> wieder freigegeben“
                                                   │  (Routine beendet Sperr-Modus)
                                                   ▼
-                               Bereit – nächstes Öffnen startet einen neuen Zyklus
+                               Bereit – nächste Nutzung startet einen neuen Zyklus
 ```
 
-Die App erkennt das Öffnen überwachter Apps über einen Bedienungshilfen-Dienst. Dabei werden keine Bildschirminhalte gelesen oder gespeichert.
+Welche App gerade im Vordergrund ist, erkennt die App über einen Bedienungshilfen-Dienst. Dabei wird nur der Name der sichtbaren App ermittelt; Bildschirminhalte werden nicht gelesen oder gespeichert.
 
 Geht ein Alarm verloren (z. B. durch Neustart, App-Update oder Energiesparmaßnahmen), holt die App verpasste Übergänge automatisch nach, sobald die überwachte App oder Social Timer selbst geöffnet wird. Ein Zyklus bleibt dadurch nicht dauerhaft hängen.
 
@@ -47,7 +51,7 @@ In Social Timer über **+** eine App auswählen und Nutzungszeit sowie Cooldown 
 
 Fehlende Berechtigungen zeigt die App als rote Hinweise in der App-Liste an. Benötigt werden:
 
-- **Bedienungshilfen-Dienst** „Social Timer“ – erkennt das Öffnen überwachter Apps
+- **Bedienungshilfen-Dienst** „Social Timer“ – erkennt, ob eine überwachte App gerade genutzt wird
 - **Benachrichtigungen** – lösen die Routinen aus
 - **Exakte Alarme** – damit Timer pünktlich ablaufen
 - **Ausnahme von der Akku-Optimierung** – siehe unten

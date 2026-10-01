@@ -24,6 +24,10 @@ object TimerScheduler {
         schedule(context, ACTION_COOLDOWN_EXPIRED, packageName, triggerAtMillis)
     }
 
+    fun cancelTimerExpired(context: Context, packageName: String) {
+        cancel(context, ACTION_TIMER_EXPIRED, packageName)
+    }
+
     fun cancelAll(context: Context, packageName: String) {
         cancel(context, ACTION_TIMER_EXPIRED, packageName)
         cancel(context, ACTION_COOLDOWN_EXPIRED, packageName)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Social Timer</string>
-    <string name="accessibility_service_description">Erkennt, wenn eine überwachte App geöffnet wird, um den Zeitlimit-Timer zu starten. Es werden keine Bildschirminhalte gelesen oder gespeichert.</string>
+    <string name="accessibility_service_description">Erkennt, welche App gerade im Vordergrund genutzt wird, damit der Zeitlimit-Timer nur während der echten Nutzung einer überwachten App läuft. Es wird nur der Name der App im Vordergrund ermittelt; Bildschirminhalte werden nicht gelesen oder gespeichert.</string>
 </resources>

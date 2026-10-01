@@ -20,7 +20,12 @@ class BootReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                AppRepository(context.applicationContext).resyncAll()
+                val repository = AppRepository(context.applicationContext)
+                if (intent.action != Intent.ACTION_MY_PACKAGE_REPLACED) {
+                    // Das Gerät war aus – eine offene Nutzungssitzung darf nicht weiterzählen.
+                    repository.discardOpenUsage()
+                }
+                repository.resyncAll()
             } finally {
                 pendingResult.finish()
             }
